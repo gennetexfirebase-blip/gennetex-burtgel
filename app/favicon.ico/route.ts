@@ -1,0 +1,10 @@
+const favicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#d8ff8f"/><path d="M45 29v18c-4 3-9 5-15 5C18 52 10 44 10 32s9-20 21-20c6 0 11 2 15 6l-7 8c-2-2-5-3-8-3-6 0-10 4-10 10s4 10 10 10c2 0 4 0 5-1v-5h-7v-8h16Z" fill="#0d2f25"/></svg>`;
+
+export function GET() {
+  return new Response(favicon, {
+    headers: {
+      "Content-Type": "image/svg+xml",
+      "Cache-Control": "public, max-age=86400",
+    },
+  });
+}
