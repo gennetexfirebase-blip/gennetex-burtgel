@@ -57,6 +57,7 @@ export default function RegistrationForm() {
   async function handlePhoto(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    if (status.kind === "error") setStatus({ kind: "idle" });
     setPhotoError("");
     try {
       setPhoto(await compressPhoto(file));
@@ -101,8 +102,12 @@ export default function RegistrationForm() {
     }
   }
 
+  function clearStaleError() {
+    if (status.kind === "error") setStatus({ kind: "idle" });
+  }
+
   return (
-    <form className="registration-form" onSubmit={handleSubmit}>
+    <form className="registration-form" onSubmit={handleSubmit} onChange={clearStaleError}>
       <div className="photo-row">
         <button className="photo-picker" type="button" onClick={() => fileRef.current?.click()}>
           {photo ? (
