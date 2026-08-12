@@ -4,6 +4,7 @@
 # next.js
 /.next/
 /out/
+/.vercel/
 
 # local environment files
 .env*
