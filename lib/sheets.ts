@@ -182,3 +182,34 @@ export async function addRegistration(input: RegistrationInput): Promise<Registr
 
   return registration;
 }
+
+export async function deleteRegistration(id: string): Promise<boolean> {
+  const client = await sheetsClient();
+  if (!client) {
+    throw new Error(
+      "Google Sheet бичих эрх тохируулаагүй байна. Service account-ийн тохиргоог шалгана уу.",
+    );
+  }
+
+  const response = await client.spreadsheets.values.get({
+    spreadsheetId: sheetId(),
+    range: "A:I",
+  });
+  const rows = (response.data.values as string[][] | undefined) || [];
+  let rowIndex = rows.findIndex((row, index) => index > 0 && row[8]?.trim() === id);
+
+  if (rowIndex === -1) {
+    const legacyMatch = /^sheet-row-(\d+)$/.exec(id);
+    const legacyRow = legacyMatch ? Number(legacyMatch[1]) : 0;
+    if (legacyRow >= 2 && legacyRow <= rows.length && !rows[legacyRow - 1]?.[8]?.trim()) {
+      rowIndex = legacyRow - 1;
+    }
+  }
+
+  if (rowIndex < 1) return false;
+  await client.spreadsheets.values.clear({
+    spreadsheetId: sheetId(),
+    range: `A${rowIndex + 1}:I${rowIndex + 1}`,
+  });
+  return true;
+}

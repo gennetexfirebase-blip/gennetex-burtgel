@@ -1,5 +1,5 @@
 import { after } from "next/server";
-import { addRegistration, getRegistrations } from "@/lib/sheets";
+import { addRegistration, deleteRegistration, getRegistrations } from "@/lib/sheets";
 import { notifyNewRegistration } from "@/lib/notifications";
 import { validateRegistration } from "@/lib/validation";
 
@@ -33,6 +33,32 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error(error);
     const message = error instanceof Error ? error.message : "Бүртгэл хадгалж чадсангүй.";
+    return Response.json({ error: message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const body = await request.json();
+    const id = typeof body?.id === "string" ? body.id.trim() : "";
+    const pin = typeof body?.pin === "string" ? body.pin.trim() : "";
+    const expectedPin = process.env.ADMIN_DELETE_PIN;
+    if (!expectedPin) {
+      return Response.json({ error: "Устгах админ PIN тохируулаагүй байна." }, { status: 503 });
+    }
+    if (pin !== expectedPin) {
+      return Response.json({ error: "Админ PIN буруу байна." }, { status: 403 });
+    }
+    if (!/^(?:[0-9a-f-]{36}|sheet-row-\d+)$/i.test(id)) {
+      return Response.json({ error: "Бүртгэлийн ID буруу байна." }, { status: 400 });
+    }
+
+    const deleted = await deleteRegistration(id);
+    if (!deleted) return Response.json({ error: "Бүртгэл олдсонгүй." }, { status: 404 });
+    return Response.json({ ok: true });
+  } catch (error) {
+    console.error(error);
+    const message = error instanceof Error ? error.message : "Бүртгэл устгаж чадсангүй.";
     return Response.json({ error: message }, { status: 500 });
   }
 }

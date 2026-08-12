@@ -34,9 +34,12 @@ npm run dev
 GOOGLE_SHEET_ID=14h3HO7EsdrF-zYfiV2kxPEaHEMshRwnI7IgirIV3RZA
 GOOGLE_SERVICE_ACCOUNT_EMAIL=...iam.gserviceaccount.com
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+ADMIN_DELETE_PIN=your-private-admin-pin
 ```
 
 Эсвэл JSON key-г бүхлээр нь нэг мөрөнд `GOOGLE_SERVICE_ACCOUNT_JSON` хувьсагчид өгч болно.
+
+`/a` дээрх устгах үйлдэл `ADMIN_DELETE_PIN`-ээр хамгаалагдана. Энэ PIN зөв үед л contact болон Google Sheet-ийн мөр давхар цэвэрлэгдэнэ.
 
 Анхны амжилттай бүртгэл дээр одоогийн `Овог, Нэр, Gmail, Утасны дугаар, Хаяг, Эрх` багануудын араас `Зураг, Бүртгүүлсэн огноо, ID` багана автоматаар нэмэгдэнэ.
 
