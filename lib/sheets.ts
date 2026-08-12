@@ -151,11 +151,20 @@ export async function addRegistration(input: RegistrationInput): Promise<Registr
     }).format(new Date()),
   };
 
-  await client.spreadsheets.values.append({
+  const existingResponse = await client.spreadsheets.values.get({
     spreadsheetId: sheetId(),
     range: "A:I",
+  });
+  const existingRows = (existingResponse.data.values as string[][] | undefined) || [];
+  const emptyRowIndex = existingRows.slice(1).findIndex((row) =>
+    [0, 1, 2, 3, 4, 6, 7, 8].every((column) => !row[column]?.trim()),
+  );
+  const targetRow = emptyRowIndex === -1 ? Math.max(existingRows.length + 1, 2) : emptyRowIndex + 2;
+
+  await client.spreadsheets.values.update({
+    spreadsheetId: sheetId(),
+    range: `A${targetRow}:I${targetRow}`,
     valueInputOption: "RAW",
-    insertDataOption: "INSERT_ROWS",
     requestBody: {
       values: [[
         registration.lastName,
